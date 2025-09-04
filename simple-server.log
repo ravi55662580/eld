@@ -1,0 +1,5 @@
+[dotenv@17.2.2] injecting env (7) from .env -- tip: ⚙️  enable debug logging with { debug: true }
+✅ Simple ELD Server running on http://localhost:3002
+📋 Carriers: http://localhost:3002/api/v1/carriers
+📚 Logbooks: http://localhost:3002/api/v1/logbooks
+❤️  Health: http://localhost:3002/health

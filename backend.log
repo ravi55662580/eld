@@ -1,0 +1,29 @@
+
+> eld-backend@1.0.0 dev
+> nodemon src/server.js
+
+[33m[nodemon] 3.1.10[39m
+[33m[nodemon] to restart at any time, enter `rs`[39m
+[33m[nodemon] watching path(s): *.*[39m
+[33m[nodemon] watching extensions: js,mjs,cjs,json[39m
+[32m[nodemon] starting `node src/server.js`[39m
+[dotenv@17.2.2] injecting env (7) from .env -- tip: 🔐 encrypt with Dotenvx: https://dotenvx.com
+Loading logbooks routes...
+Logbook routes object: function [ 'caseSensitive', 'mergeParams', 'params', 'strict', 'stack' ]
+Registering logbooks routes at: /api/v1/logbooks
+✅ Logbooks routes loaded successfully
+(node:2357) [MONGOOSE] Warning: Duplicate schema index on {"email":1} found. This is often due to declaring an index using both "index: true" and "schema.index()". Please remove the duplicate index definition.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:2357) [MONGOOSE] Warning: Duplicate schema index on {"username":1} found. This is often due to declaring an index using both "index: true" and "schema.index()". Please remove the duplicate index definition.
+(node:2357) [MONGOOSE] Warning: Duplicate schema index on {"dotNumber":1} found. This is often due to declaring an index using both "index: true" and "schema.index()". Please remove the duplicate index definition.
+(node:2357) [MONGOOSE] Warning: Duplicate schema index on {"vin":1} found. This is often due to declaring an index using both "index: true" and "schema.index()". Please remove the duplicate index definition.
+(node:2357) [MONGOOSE] Warning: Duplicate schema index on {"fuelType":1} found. This is often due to declaring an index using both "index: true" and "schema.index()". Please remove the duplicate index definition.
+(node:2357) [MONGOOSE] Warning: `collection` is a reserved schema pathname and may break some functionality. You are allowed to use it, but use at your own risk. To disable this warning pass `suppressReservedKeysWarning` as a schema option.
+
+🚛 ELD Software API Server
+📡 Running in development mode
+🌐 Server: http://localhost:3002
+📚 API: http://localhost:3002/api/v1
+❤️  Health: http://localhost:3002/health
+  
+MongoDB Connected: localhost

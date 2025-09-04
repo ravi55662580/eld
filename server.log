@@ -1,0 +1,62 @@
+
+> eld-backend@1.0.0 start
+> node src/server.js
+
+[dotenv@17.2.2] injecting env (7) from .env -- tip: ⚙️  suppress all logs with { quiet: true }
+Loading logbooks routes...
+Logbook routes object: function [ 'caseSensitive', 'mergeParams', 'params', 'strict', 'stack' ]
+Registering logbooks routes at: /api/v1/logbooks
+✅ Logbooks routes loaded successfully
+(node:15743) [MONGOOSE] Warning: Duplicate schema index on {"email":1} found. This is often due to declaring an index using both "index: true" and "schema.index()". Please remove the duplicate index definition.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:15743) [MONGOOSE] Warning: Duplicate schema index on {"username":1} found. This is often due to declaring an index using both "index: true" and "schema.index()". Please remove the duplicate index definition.
+(node:15743) [MONGOOSE] Warning: Duplicate schema index on {"dotNumber":1} found. This is often due to declaring an index using both "index: true" and "schema.index()". Please remove the duplicate index definition.
+(node:15743) [MONGOOSE] Warning: Duplicate schema index on {"vin":1} found. This is often due to declaring an index using both "index: true" and "schema.index()". Please remove the duplicate index definition.
+(node:15743) [MONGOOSE] Warning: Duplicate schema index on {"fuelType":1} found. This is often due to declaring an index using both "index: true" and "schema.index()". Please remove the duplicate index definition.
+(node:15743) [MONGOOSE] Warning: `collection` is a reserved schema pathname and may break some functionality. You are allowed to use it, but use at your own risk. To disable this warning pass `suppressReservedKeysWarning` as a schema option.
+
+🚛 ELD Software API Server
+📡 Running in development mode
+🌐 Server: http://localhost:3002
+📚 API: http://localhost:3002/api/v1
+❤️  Health: http://localhost:3002/health
+  
+MongoDB Connected: localhost
+[0mGET /health [32m200[0m 2.613 ms - 113[0m
+[0mGET /health [32m200[0m 19.474 ms - 113[0m
+Error Stack: Error: Route not found: /api/health
+    at notFound (/Users/rabindrayadav/eld-software/eld-backend/src/middleware/errorHandler.js:78:17)
+    at Layer.handleRequest (/Users/rabindrayadav/eld-software/eld-backend/node_modules/router/lib/layer.js:152:17)
+    at trimPrefix (/Users/rabindrayadav/eld-software/eld-backend/node_modules/router/index.js:342:13)
+    at /Users/rabindrayadav/eld-software/eld-backend/node_modules/router/index.js:297:9
+    at processParams (/Users/rabindrayadav/eld-software/eld-backend/node_modules/router/index.js:582:12)
+    at next (/Users/rabindrayadav/eld-software/eld-backend/node_modules/router/index.js:291:5)
+    at logger (/Users/rabindrayadav/eld-software/eld-backend/node_modules/morgan/index.js:144:5)
+    at Layer.handleRequest (/Users/rabindrayadav/eld-software/eld-backend/node_modules/router/lib/layer.js:152:17)
+    at trimPrefix (/Users/rabindrayadav/eld-software/eld-backend/node_modules/router/index.js:342:13)
+    at /Users/rabindrayadav/eld-software/eld-backend/node_modules/router/index.js:297:9
+[0mGET /api/health [33m404[0m 16.734 ms - 1236[0m
+Error Stack: Error: Route not found: /api/v1/health
+    at notFound (/Users/rabindrayadav/eld-software/eld-backend/src/middleware/errorHandler.js:78:17)
+    at Layer.handleRequest (/Users/rabindrayadav/eld-software/eld-backend/node_modules/router/lib/layer.js:152:17)
+    at trimPrefix (/Users/rabindrayadav/eld-software/eld-backend/node_modules/router/index.js:342:13)
+    at /Users/rabindrayadav/eld-software/eld-backend/node_modules/router/index.js:297:9
+    at processParams (/Users/rabindrayadav/eld-software/eld-backend/node_modules/router/index.js:582:12)
+    at next (/Users/rabindrayadav/eld-software/eld-backend/node_modules/router/index.js:291:5)
+    at logger (/Users/rabindrayadav/eld-software/eld-backend/node_modules/morgan/index.js:144:5)
+    at Layer.handleRequest (/Users/rabindrayadav/eld-software/eld-backend/node_modules/router/lib/layer.js:152:17)
+    at trimPrefix (/Users/rabindrayadav/eld-software/eld-backend/node_modules/router/index.js:342:13)
+    at /Users/rabindrayadav/eld-software/eld-backend/node_modules/router/index.js:297:9
+[0mGET /api/v1/health [33m404[0m 1.232 ms - 1245[0m
+Error Stack: Error: Route not found: /
+    at notFound (/Users/rabindrayadav/eld-software/eld-backend/src/middleware/errorHandler.js:78:17)
+    at Layer.handleRequest (/Users/rabindrayadav/eld-software/eld-backend/node_modules/router/lib/layer.js:152:17)
+    at trimPrefix (/Users/rabindrayadav/eld-software/eld-backend/node_modules/router/index.js:342:13)
+    at /Users/rabindrayadav/eld-software/eld-backend/node_modules/router/index.js:297:9
+    at processParams (/Users/rabindrayadav/eld-software/eld-backend/node_modules/router/index.js:582:12)
+    at next (/Users/rabindrayadav/eld-software/eld-backend/node_modules/router/index.js:291:5)
+    at logger (/Users/rabindrayadav/eld-software/eld-backend/node_modules/morgan/index.js:144:5)
+    at Layer.handleRequest (/Users/rabindrayadav/eld-software/eld-backend/node_modules/router/lib/layer.js:152:17)
+    at trimPrefix (/Users/rabindrayadav/eld-software/eld-backend/node_modules/router/index.js:342:13)
+    at /Users/rabindrayadav/eld-software/eld-backend/node_modules/router/index.js:297:9
+[0mGET / [33m404[0m 0.523 ms - 1206[0m

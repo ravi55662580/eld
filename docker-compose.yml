@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:7.0
+    container_name: eld-mongodb
+    restart: always
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: password123
+      MONGO_INITDB_DATABASE: eld-software
+    volumes:
+      - mongodb_data:/data/db
+      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+    networks:
+      - eld-network
+
+  api:
+    build: .
+    container_name: eld-api
+    restart: always
+    ports:
+      - "5000:5000"
+    environment:
+      NODE_ENV: development
+      MONGODB_URI: mongodb://root:password123@mongodb:27017/eld-software?authSource=admin
+      JWT_SECRET: eld-software-jwt-secret-key-2025-development-only
+      FRONTEND_URL: http://localhost:5173
+    depends_on:
+      - mongodb
+    networks:
+      - eld-network
+    volumes:
+      - ./src:/app/src
+      - ./package.json:/app/package.json
+
+volumes:
+  mongodb_data:
+
+networks:
+  eld-network:
+    driver: bridge
