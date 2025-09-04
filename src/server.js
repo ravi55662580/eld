@@ -91,17 +91,6 @@ app.get('/health', (req, res) => {
 
 // API info endpoint
 app.get(`${apiPrefix}`, (req, res) => {
-  // List all registered routes for debugging
-  const routes = [];
-  app._router.stack.forEach(middleware => {
-    if (middleware.route && middleware.route.path) {
-      routes.push(middleware.route.path);
-    } else if (middleware.name === 'router' && middleware.regexp) {
-      const path = middleware.regexp.toString().match(/\\\/([^\\\\]+)/)?.[1] || 'unknown';
-      routes.push('/' + path);
-    }
-  });
-  
   res.json({
     success: true,
     message: 'ELD Software API v1',
@@ -124,8 +113,8 @@ app.get(`${apiPrefix}`, (req, res) => {
       compliance: `${apiPrefix}/compliance`,
       reports: `${apiPrefix}/reports`
     },
-    registeredRoutes: routes,
-    docs: `${apiPrefix}/docs`
+    docs: `${apiPrefix}/docs`,
+    health: '/health'
   });
 });
 
