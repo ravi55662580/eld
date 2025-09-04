@@ -94,7 +94,7 @@ app.get(`${apiPrefix}`, (req, res) => {
   // List all registered routes for debugging
   const routes = [];
   app._router.stack.forEach(middleware => {
-    if (middleware.route) {
+    if (middleware.route && middleware.route.path) {
       routes.push(middleware.route.path);
     } else if (middleware.name === 'router' && middleware.regexp) {
       const path = middleware.regexp.toString().match(/\\\/([^\\\\]+)/)?.[1] || 'unknown';
