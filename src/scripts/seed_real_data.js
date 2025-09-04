@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const fs = require('fs');
 const path = require('path');
+const logger = require('../utils/logger');
 
 // Import models
 const Carrier = require('../models/Carrier');
@@ -31,18 +32,18 @@ function getEventCode(status) {
 
 async function seedRealELDData() {
   try {
-    console.log('🚀 Starting ELD Real Data Seeding Process...');
+    logger.info('🚀 Starting ELD Real Data Seeding Process...');
     
     // Connect to MongoDB
-    console.log('🔗 Connecting to MongoDB...');
+    logger.info('🔗 Connecting to MongoDB...');
     await mongoose.connect(directUri, {
       useNewUrlParser: true,
       useUnifiedTopology: true
     });
-    console.log('✅ Connected to MongoDB successfully');
+    logger.info('✅ Connected to MongoDB successfully');
     
     // Clear existing data
-    console.log('🧹 Clearing existing data...');
+    logger.info('🧹 Clearing existing data...');
     await Promise.all([
       Carrier.deleteMany({}),
       Driver.deleteMany({}),
@@ -55,12 +56,12 @@ async function seedRealELDData() {
     const dataPath = path.join(__dirname, '../../../eld_seed_data.json');
     const eldData = JSON.parse(fs.readFileSync(dataPath, 'utf8'));
     
-    console.log('📊 Loaded ELD data from FNE TRANSPORT LLC');
-    console.log(`   - Date Range: ${eldData.metadata.dateRange.start} to ${eldData.metadata.dateRange.end}`);
-    console.log(`   - Total Original Records: ${eldData.metadata.totalRecords}`);
+    logger.info('📊 Loaded ELD data from FNE TRANSPORT LLC');
+    logger.info(`   - Date Range: ${eldData.metadata.dateRange.start} to ${eldData.metadata.dateRange.end}`);
+    logger.info(`   - Total Original Records: ${eldData.metadata.totalRecords}`);
     
     // 1. Create Carrier
-    console.log('🏢 Creating carrier: FNE TRANSPORT LLC...');
+    logger.info('🏢 Creating carrier: FNE TRANSPORT LLC...');
     const carrier = new Carrier({
       name: eldData.carrier.name,
       dotNumber: eldData.carrier.dotNumber,
@@ -80,10 +81,10 @@ async function seedRealELDData() {
     });
     
     const savedCarrier = await carrier.save();
-    console.log(`✅ Carrier created with ID: ${savedCarrier._id}`);
+    logger.info(`✅ Carrier created with ID: ${savedCarrier._id}`);
     
     // 2. Create Admin User for the carrier
-    console.log('👤 Creating carrier admin user...');
+    logger.info('👤 Creating carrier admin user...');
     const adminUser = new User({
       username: 'fne_admin',
       email: 'admin@fnetransport.com',
@@ -102,10 +103,10 @@ async function seedRealELDData() {
     });
     
     const savedAdminUser = await adminUser.save();
-    console.log(`✅ Admin user created: ${savedAdminUser.username}`);
+    logger.info(`✅ Admin user created: ${savedAdminUser.username}`);
     
     // 3. Create Driver
-    console.log('🚛 Creating driver...');
+    logger.info('🚛 Creating driver...');
     const driverData = eldData.drivers[0];
     const driver = new Driver({
       carrierId: savedCarrier._id,
@@ -130,10 +131,10 @@ async function seedRealELDData() {
     });
     
     const savedDriver = await driver.save();
-    console.log(`✅ Driver created: ${savedDriver.firstName} ${savedDriver.lastName} (${savedDriver.licenseNumber})`);
+    logger.info(`✅ Driver created: ${savedDriver.firstName} ${savedDriver.lastName} (${savedDriver.licenseNumber})`);
     
     // 4. Create Driver User Account
-    console.log('👤 Creating driver user account...');
+    logger.info('👤 Creating driver user account...');
     const driverUser = new User({
       username: driverData.eldUsername,
       email: 'john.driver@fnetransport.com',

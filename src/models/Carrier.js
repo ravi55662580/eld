@@ -18,7 +18,6 @@ const carrierSchema = new mongoose.Schema({
   dotNumber: {
     type: String,
     required: [true, 'DOT number is required'],
-    unique: true,
     trim: true,
     match: [/^\d{1,8}$/, 'DOT number must be 1-8 digits']
   },
@@ -93,7 +92,7 @@ const carrierSchema = new mongoose.Schema({
 });
 
 // Indexes for performance
-carrierSchema.index({ dotNumber: 1 });
+carrierSchema.index({ dotNumber: 1 }, { unique: true });
 carrierSchema.index({ name: 1 });
 carrierSchema.index({ isActive: 1 });
 carrierSchema.index({ 'subscription.isActive': 1 });

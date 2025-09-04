@@ -18,6 +18,7 @@ const {
   exportFuelReceipts
 } = require('../controllers/fuelReceiptController');
 const { authenticate, authorize } = require('../middleware/auth');
+const { upload, handleUploadError } = require('../middleware/fileUpload');
 
 const router = express.Router();
 
@@ -110,7 +111,7 @@ router.post('/:id/dispute',
 );
 
 // POST /api/v1/fuel-receipts/:id/upload-image - Upload receipt image
-router.post('/:id/upload-image', mongoIdValidation, uploadReceiptImage);
+router.post('/:id/upload-image', mongoIdValidation, upload.single('receiptImage'), handleUploadError, uploadReceiptImage);
 
 // PUT /api/v1/fuel-receipts/:id - Update fuel receipt
 router.put('/:id', 

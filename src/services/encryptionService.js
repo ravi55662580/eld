@@ -1,6 +1,7 @@
 const crypto = require('crypto');
 const bcrypt = require('bcryptjs');
 const { promisify } = require('util');
+const logger = require('../utils/logger');
 
 /**
  * Advanced Encryption and Privacy Service
@@ -52,7 +53,7 @@ class EncryptionService {
     await this.setupDataAnonymization();
     await this.setupPrivacyEngine();
     
-    console.log('✅ Encryption services initialized');
+    logger.info('✅ Encryption services initialized');
   }
 
   /**
@@ -150,7 +151,7 @@ class EncryptionService {
       }
     };
 
-    console.log('✅ Key management system configured');
+    logger.info('✅ Key management system configured');
   }
 
   /**
@@ -246,7 +247,7 @@ class EncryptionService {
       }
     };
 
-    console.log('✅ Data anonymization engine configured');
+    logger.info('✅ Data anonymization engine configured');
   }
 
   /**
@@ -316,7 +317,7 @@ class EncryptionService {
       }
     };
 
-    console.log('✅ Privacy engine configured');
+    logger.info('✅ Privacy engine configured');
   }
 
   /**

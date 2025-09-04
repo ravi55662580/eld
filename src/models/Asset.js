@@ -28,7 +28,6 @@ const assetSchema = new mongoose.Schema({
   vin: {
     type: String,
     required: [true, 'VIN is required'],
-    unique: true,
     trim: true,
     minlength: [17, 'VIN must be exactly 17 characters'],
     maxlength: [17, 'VIN must be exactly 17 characters'],
@@ -119,7 +118,7 @@ const assetSchema = new mongoose.Schema({
 // Compound indexes for performance
 assetSchema.index({ carrierId: 1, number: 1 }, { unique: true });
 assetSchema.index({ carrierId: 1, active: 1 });
-assetSchema.index({ vin: 1 });
+assetSchema.index({ vin: 1 }, { unique: true });
 assetSchema.index({ plate: 1 });
 
 // Virtual for full asset identifier

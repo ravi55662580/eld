@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const { createHash } = require('crypto');
+const logger = require('../utils/logger');
 
 /**
  * Enhanced Database Configuration for ELD System
@@ -66,8 +67,8 @@ class EnhancedDatabaseConfig {
 
       const conn = await mongoose.connect(process.env.MONGODB_URI, connectionOptions);
       
-      console.log(`✅ MongoDB Connected: ${conn.connection.host}`);
-      console.log(`📊 Connection Pool: ${connectionOptions.maxPoolSize} max connections`);
+      logger.info(`✅ MongoDB Connected: ${conn.connection.host}`);
+      logger.info(`📊 Connection Pool: ${connectionOptions.maxPoolSize} max connections`);
       
       // Initialize database features
       await this.initializeSharding();
@@ -82,7 +83,7 @@ class EnhancedDatabaseConfig {
       return conn;
       
     } catch (error) {
-      console.error('❌ MongoDB connection error:', error);
+      logger.error('❌ MongoDB connection error:', { error: error.message, stack: error.stack });
       await this.handleConnectionError(error);
       process.exit(1);
     }
@@ -94,7 +95,7 @@ class EnhancedDatabaseConfig {
   async initializeSharding() {
     try {
       if (process.env.DB_ENABLE_SHARDING === 'true') {
-        console.log('🔀 Configuring database sharding...');
+        logger.info('🔀 Configuring database sharding...');
         
         // Shard key configuration for different collections
         const shardKeys = {
@@ -113,14 +114,14 @@ class EnhancedDatabaseConfig {
               shardCollection: `${mongoose.connection.name}.${collection}`,
               key: shardKey
             });
-            console.log(`✅ Sharding enabled for ${collection}`);
+            logger.info(`✅ Sharding enabled for ${collection}`);
           } catch (err) {
-            console.log(`ℹ️ Sharding already configured for ${collection}`);
+            logger.info(`ℹ️ Sharding already configured for ${collection}`);
           }
         }
       }
     } catch (error) {
-      console.error('⚠️ Sharding configuration error:', error.message);
+      logger.error('⚠️ Sharding configuration error:', { error: error.message });
     }
   }
 
@@ -128,7 +129,7 @@ class EnhancedDatabaseConfig {
    * Setup Performance-Optimized Indexes
    */
   async setupIndexes() {
-    console.log('📈 Setting up performance indexes...');
+    logger.info('📈 Setting up performance indexes...');
     
     const indexConfigs = {
       // Driver logbook indexes
@@ -186,9 +187,9 @@ class EnhancedDatabaseConfig {
         for (const index of indexes) {
           await db.collection(collection).createIndex(index, { background: true });
         }
-        console.log(`✅ Indexes created for ${collection}`);
+        logger.info(`✅ Indexes created for ${collection}`);
       } catch (error) {
-        console.error(`⚠️ Index creation error for ${collection}:`, error.message);
+        logger.error(`⚠️ Index creation error for ${collection}:`, { error: error.message });
       }
     }
   }
@@ -198,11 +199,11 @@ class EnhancedDatabaseConfig {
    */
   async initializeEncryption() {
     if (!this.encryptionKey) {
-      console.warn('⚠️ DB_ENCRYPTION_KEY not set - field encryption disabled');
+      logger.warn('⚠️ DB_ENCRYPTION_KEY not set - field encryption disabled');
       return;
     }
 
-    console.log('🔐 Initializing field-level encryption...');
+    logger.info('🔐 Initializing field-level encryption...');
     
     // Setup automatic encryption for sensitive fields
     const encryptedFields = {
@@ -223,7 +224,7 @@ class EnhancedDatabaseConfig {
       schemaMap: this.generateEncryptionSchemas(encryptedFields)
     });
 
-    console.log('✅ Field-level encryption initialized');
+    logger.info('✅ Field-level encryption initialized');
   }
 
   /**
@@ -257,7 +258,7 @@ class EnhancedDatabaseConfig {
    * Setup Comprehensive Audit Logging
    */
   async setupAuditLogging() {
-    console.log('📋 Setting up audit logging...');
+    logger.info('📋 Setting up audit logging...');
     
     // MongoDB audit configuration
     if (process.env.DB_ENABLE_AUDITING === 'true') {
@@ -277,7 +278,7 @@ class EnhancedDatabaseConfig {
         }
       };
       
-      console.log('✅ Database audit logging configured');
+      logger.info('✅ Database audit logging configured');
     }
 
     // Application-level audit logging
@@ -302,7 +303,7 @@ class EnhancedDatabaseConfig {
           // Store in audit collection
           await mongoose.connection.db.collection('audit_logs').insertOne(auditEntry);
         } catch (error) {
-          console.error('Audit logging error:', error);
+          logger.error('Audit logging error:', { error: error.message });
         }
       }
     };

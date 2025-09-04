@@ -85,8 +85,7 @@ const fuelReceiptSchema = new mongoose.Schema({
     type: String,
     required: true,
     enum: ['DIESEL', 'GASOLINE', 'DEF', 'BIODIESEL', 'CNG', 'LNG'],
-    default: 'DIESEL',
-    index: true
+    default: 'DIESEL'
   },
   fuelGrade: {
     type: String,

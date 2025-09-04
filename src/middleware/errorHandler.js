@@ -1,3 +1,5 @@
+const logger = require('../utils/logger');
+
 /**
  * Global error handling middleware
  */
@@ -5,10 +7,14 @@ const errorHandler = (err, req, res, next) => {
   let error = { ...err };
   error.message = err.message;
 
-  // Log error in development
-  if (process.env.NODE_ENV === 'development') {
-    console.error('Error Stack:', err.stack);
-  }
+  // Log error
+  logger.error('Request error:', {
+    error: err.message,
+    stack: err.stack,
+    url: req.url,
+    method: req.method,
+    userId: req.user?._id
+  });
 
   // Mongoose bad ObjectId
   if (err.name === 'CastError') {

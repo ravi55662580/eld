@@ -9,7 +9,14 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "seed": "node src/scripts/seed.js"
   },
-  "keywords": ["eld", "electronic-logging", "trucking", "api", "node", "express"],
+  "keywords": [
+    "eld",
+    "electronic-logging",
+    "trucking",
+    "api",
+    "node",
+    "express"
+  ],
   "author": "ELD Software Team",
   "license": "MIT",
   "engines": {
@@ -27,7 +34,8 @@
     "helmet": "^8.1.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.18.0",
-    "morgan": "^1.10.1"
+    "morgan": "^1.10.1",
+    "multer": "^2.0.2"
   },
   "devDependencies": {
     "nodemon": "^3.1.10"

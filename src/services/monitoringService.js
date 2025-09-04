@@ -2,6 +2,7 @@ const EventEmitter = require('events');
 const os = require('os');
 const fs = require('fs').promises;
 const path = require('path');
+const logger = require('../utils/logger');
 
 /**
  * Comprehensive Monitoring and Alerting Service
@@ -62,7 +63,7 @@ class MonitoringService extends EventEmitter {
     // Start monitoring processes
     this.startMonitoring();
     
-    console.log('✅ Monitoring service initialized');
+    logger.info('✅ Monitoring service initialized');
   }
 
   /**
@@ -195,7 +196,7 @@ class MonitoringService extends EventEmitter {
       }
     };
 
-    console.log('✅ Metrics collection configured');
+    logger.info('✅ Metrics collection configured');
   }
 
   /**
@@ -315,7 +316,7 @@ class MonitoringService extends EventEmitter {
       }
     };
 
-    console.log('✅ Health checks configured');
+    logger.info('✅ Health checks configured');
   }
 
   /**
@@ -428,7 +429,7 @@ class MonitoringService extends EventEmitter {
               await this.sendAlertNotifications(alert);
             }
           } catch (error) {
-            console.error(`Error evaluating alert rule ${rule.id}:`, error);
+            logger.error(`Error evaluating alert rule ${rule.id}:`, { error: error.message, ruleId: rule.id });
           }
         }
         
@@ -461,7 +462,7 @@ class MonitoringService extends EventEmitter {
       }
     };
 
-    console.log('✅ Alert manager configured');
+    logger.info('✅ Alert manager configured');
   }
 
   /**
@@ -546,7 +547,7 @@ class MonitoringService extends EventEmitter {
             });
           }
         } catch (error) {
-          console.error('ML anomaly detection error:', error);
+          logger.error('ML anomaly detection error:', { error: error.message });
         }
         
         return anomalies;
@@ -580,7 +581,7 @@ class MonitoringService extends EventEmitter {
       }
     };
 
-    console.log('✅ Anomaly detection configured');
+    logger.info('✅ Anomaly detection configured');
   }
 
   /**
@@ -632,7 +633,7 @@ class MonitoringService extends EventEmitter {
       }
     };
 
-    console.log('✅ Log aggregation configured');
+    logger.info('✅ Log aggregation configured');
   }
 
   /**
@@ -688,7 +689,7 @@ class MonitoringService extends EventEmitter {
       }
     };
 
-    console.log('✅ Performance monitoring configured');
+    logger.info('✅ Performance monitoring configured');
   }
 
   /**
@@ -714,7 +715,7 @@ class MonitoringService extends EventEmitter {
         await this.anomalyDetector.detectAnomalies(allMetrics);
         
       } catch (error) {
-        console.error('Metrics collection error:', error);
+        logger.error('Metrics collection error:', { error: error.message });
       }
     }, this.config.metrics.collectionInterval);
 
@@ -723,7 +724,7 @@ class MonitoringService extends EventEmitter {
       try {
         await this.healthChecker.performHealthCheck();
       } catch (error) {
-        console.error('Health check error:', error);
+        logger.error('Health check error:', { error: error.message });
       }
     }, this.config.healthCheck.interval);
 
@@ -732,11 +733,11 @@ class MonitoringService extends EventEmitter {
       try {
         await this.logAggregator.aggregateLogs();
       } catch (error) {
-        console.error('Log aggregation error:', error);
+        logger.error('Log aggregation error:', { error: error.message });
       }
     }, 5 * 60 * 1000); // Every 5 minutes
 
-    console.log('✅ Monitoring processes started');
+    logger.info('✅ Monitoring processes started');
   }
 
   /**

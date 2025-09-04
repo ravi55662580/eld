@@ -1,7 +1,12 @@
 const Report = require('../models/Report');
 const { asyncHandler } = require('../middleware/errorHandler');
 const { validationResult } = require('express-validator');
+const { applyRoleFiltering } = require('../utils/roleFiltering');
+const { successResponse, errorResponse } = require('../utils/responseHelpers');
+const logger = require('../utils/logger');
 const mongoose = require('mongoose');
+const fs = require('fs');
+const path = require('path');
 
 /**
  * Get all reports for a carrier
@@ -544,13 +549,131 @@ const downloadReport = asyncHandler(async (req, res) => {
       success: false,
       message: 'Report execution not completed'
     });
+
+const generateReportData = async (report, parameters) => {
+  const { reportType, dateRange, filters } = parameters;
+  
+  switch (reportType) {
+    case 'HOS_SUMMARY':
+      return await generateHOSSummaryData(dateRange, filters);
+    case 'DVIR_COMPLIANCE':
+      return await generateDVIRComplianceData(dateRange, filters);
+    case 'VIOLATION_REPORT':
+      return await generateViolationReportData(dateRange, filters);
+    case 'FUEL_EFFICIENCY':
+      return await generateFuelEfficiencyData(dateRange, filters);
+    default:
+      throw new Error(`Unsupported report type: ${reportType}`);
+  }
+};
+
+const formatReportOutput = (report, data) => {
+  return {
+    reportId: report._id,
+    generatedAt: new Date(),
+    parameters: report.parameters,
+    data: data,
+    summary: {
+      totalRecords: Array.isArray(data) ? data.length : 1,
+      dateRange: report.parameters.dateRange
+    }
+  };
+};
+
+const generateHOSSummaryData = async (dateRange, filters) => {
+  const LogBook = require('../models/LogBook');
+  
+  const query = {
+    logDate: {
+      $gte: new Date(dateRange.start),
+      $lte: new Date(dateRange.end)
+    }
+  };
+  
+  if (filters.carrierId) query.carrierId = filters.carrierId;
+  if (filters.driverId) query.driverId = filters.driverId;
+  
+  return await LogBook.find(query)
+    .populate('driverId', 'firstName lastName licenseNumber')
+    .populate('carrierId', 'name')
+    .sort({ logDate: -1 });
+};
+
+const generateDVIRComplianceData = async (dateRange, filters) => {
+  const DVIR = require('../models/DVIR');
+  
+  const query = {
+    inspectionDate: {
+      $gte: new Date(dateRange.start),
+      $lte: new Date(dateRange.end)
+    }
+  };
+  
+  if (filters.carrierId) query.carrierId = filters.carrierId;
+  if (filters.vehicleId) query.vehicleId = filters.vehicleId;
+  
+  return await DVIR.find(query)
+    .populate('driverId', 'firstName lastName')
+    .populate('vehicleId', 'number vin')
+    .sort({ inspectionDate: -1 });
+};
+
+const generateViolationReportData = async (dateRange, filters) => {
+  const Violation = require('../models/Violation');
+  
+  const query = {
+    violationDate: {
+      $gte: new Date(dateRange.start),
+      $lte: new Date(dateRange.end)
+    }
+  };
+  
+  if (filters.carrierId) query.carrierId = filters.carrierId;
+  if (filters.severity) query.severity = filters.severity;
+  
+  return await Violation.find(query)
+    .populate('driverId', 'firstName lastName')
+    .sort({ violationDate: -1 });
+};
+
+const generateFuelEfficiencyData = async (dateRange, filters) => {
+  const FuelReceipt = require('../models/FuelReceipt');
+  
+  const query = {
+    purchaseDate: {
+      $gte: new Date(dateRange.start),
+      $lte: new Date(dateRange.end)
+    }
+  };
+  
+  if (filters.carrierId) query.carrierId = filters.carrierId;
+  if (filters.vehicleId) query.vehicleId = filters.vehicleId;
+  
+  return await FuelReceipt.find(query)
+    .populate('driverId', 'firstName lastName')
+    .populate('vehicleId', 'number')
+    .sort({ purchaseDate: -1 });
+};
+
   }
   
-  // TODO: Implement actual file download
-  // This would typically:
-  // 1. Check file exists
-  // 2. Set appropriate headers
-  // 3. Stream file to response
+  // Check if report file exists
+  const reportPath = path.join(__dirname, '../../reports', report.fileName);
+  
+  if (!fs.existsSync(reportPath)) {
+    return res.status(404).json({
+      success: false,
+      message: 'Report file not found'
+    });
+  }
+  
+  const stat = fs.statSync(reportPath);
+  res.setHeader('Content-Length', stat.size);
+  res.setHeader('Content-Type', 'application/octet-stream');
+  res.setHeader('Content-Disposition', `attachment; filename=${report.fileName}`);
+  
+  const fileStream = fs.createReadStream(reportPath);
+  fileStream.pipe(res);
   
   // For now, return file info
   res.json({

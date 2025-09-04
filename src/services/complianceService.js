@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const { createHash, randomBytes } = require('crypto');
+const logger = require('../utils/logger');
 
 /**
  * Comprehensive Compliance and Audit Service
@@ -62,7 +63,7 @@ class ComplianceService {
     await this.setupDataGovernance();
     await this.setupComplianceMonitoring();
     
-    console.log('✅ Compliance service initialized');
+    logger.info('✅ Compliance service initialized');
   }
 
   /**
@@ -126,7 +127,7 @@ class ComplianceService {
       }
     };
 
-    console.log('✅ Audit system configured');
+    logger.info('✅ Audit system configured');
   }
 
   /**
@@ -286,7 +287,7 @@ class ComplianceService {
       }
     };
 
-    console.log('✅ Privacy controls configured');
+    logger.info('✅ Privacy controls configured');
   }
 
   /**
@@ -341,7 +342,7 @@ class ComplianceService {
       }
     };
 
-    console.log('✅ Data governance configured');
+    logger.info('✅ Data governance configured');
   }
 
   /**
@@ -423,7 +424,7 @@ class ComplianceService {
     // Schedule periodic compliance checks
     this.scheduleComplianceChecks();
     
-    console.log('✅ Compliance monitoring configured');
+    logger.info('✅ Compliance monitoring configured');
   }
 
   /**
@@ -637,7 +638,7 @@ class ComplianceService {
     try {
       await mongoose.connection.db.collection('audit_logs').insertOne(auditEntry);
     } catch (error) {
-      console.error('Failed to store audit log:', error);
+      logger.error('Failed to store audit log:', { error: error.message });
     }
   }
 
@@ -645,7 +646,7 @@ class ComplianceService {
     try {
       await mongoose.connection.db.collection('compliance_reports').insertOne(report);
     } catch (error) {
-      console.error('Failed to store compliance report:', error);
+      logger.error('Failed to store compliance report:', { error: error.message });
     }
   }
 
@@ -653,7 +654,7 @@ class ComplianceService {
     try {
       await mongoose.connection.db.collection('compliance_alerts').insertOne(alert);
     } catch (error) {
-      console.error('Failed to store compliance alert:', error);
+      logger.error('Failed to store compliance alert:', { error: error.message });
     }
   }
 
@@ -666,7 +667,7 @@ class ComplianceService {
       try {
         await this.complianceMonitor.monitorCompliance();
       } catch (error) {
-        console.error('Daily compliance check failed:', error);
+        logger.error('Daily compliance check failed:', { error: error.message });
       }
     }, 24 * 60 * 60 * 1000); // Every 24 hours
 
@@ -676,11 +677,11 @@ class ComplianceService {
         await this.dataGovernance.applyRetentionPolicies();
         await this.dataGovernance.monitorProcessingActivities();
       } catch (error) {
-        console.error('Weekly data governance tasks failed:', error);
+        logger.error('Weekly data governance tasks failed:', { error: error.message });
       }
     }, 7 * 24 * 60 * 60 * 1000); // Every 7 days
 
-    console.log('✅ Compliance check schedules configured');
+    logger.info('✅ Compliance check schedules configured');
   }
 
   /**

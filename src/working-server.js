@@ -3,6 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const connectDB = require('./config/database');
 const Carrier = require('./models/Carrier');
+const logger = require('./utils/logger');
 
 const app = express();
 
@@ -31,16 +32,16 @@ app.get('/health', (req, res) => {
 // Simple carriers endpoint without auth for testing
 app.get(`${apiPrefix}/carriers`, async (req, res) => {
   try {
-    console.log('Carriers endpoint accessed');
+    logger.info('Carriers endpoint accessed');
     const carriers = await Carrier.find({}).sort({ createdAt: -1 });
-    console.log('Found carriers:', carriers.length);
+    logger.info('Found carriers:', { count: carriers.length });
     
     res.json({
       success: true,
       data: { carriers }
     });
   } catch (error) {
-    console.error('Carriers route error:', error);
+    logger.error('Carriers route error:', { error: error.message });
     res.status(500).json({
       success: false,
       message: 'Error fetching carriers',
@@ -52,6 +53,6 @@ app.get(`${apiPrefix}/carriers`, async (req, res) => {
 const PORT = process.env.PORT || 3002;
 
 app.listen(PORT, () => {
-  console.log(`Working server running on http://localhost:${PORT}`);
-  console.log(`Carriers endpoint: http://localhost:${PORT}${apiPrefix}/carriers`);
+  logger.info(`Working server running on http://localhost:${PORT}`);
+  logger.info(`Carriers endpoint: http://localhost:${PORT}${apiPrefix}/carriers`);
 });

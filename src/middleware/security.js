@@ -3,6 +3,7 @@ const helmet = require('helmet');
 const crypto = require('crypto');
 const { body, validationResult, sanitizeBody } = require('express-validator');
 const mongoose = require('mongoose');
+const logger = require('../utils/logger');
 
 /**
  * Advanced Security Middleware Suite for ELD System
@@ -29,7 +30,7 @@ class SecurityMiddleware {
       ldap_injection: /(\(|\)|&|\||!|=|\*|~|>=|<=|\xff|\x00)/g
     };
 
-    console.log('🛡️ Security threat detection patterns loaded');
+    logger.info('🛡️ Security threat detection patterns loaded');
   }
 
   /**
@@ -391,7 +392,7 @@ class SecurityMiddleware {
             this.logSecurityEvent('ACCOUNT_LOCKED', null, { userId, failedAttempts: user.security.failedAttempts });
           }
         } catch (error) {
-          console.error('Failed login handling error:', error);
+          logger.error('Failed login handling error:', { error: error.message });
         }
       },
 
@@ -416,7 +417,7 @@ class SecurityMiddleware {
 
           this.logSecurityEvent('LOGIN_SUCCESS', req, { userId });
         } catch (error) {
-          console.error('Successful login handling error:', error);
+          logger.error('Successful login handling error:', { error: error.message });
         }
       }
     };
@@ -545,13 +546,13 @@ class SecurityMiddleware {
 
     // Store in security logs collection
     if (mongoose.connection.readyState === 1) {
-      mongoose.connection.db.collection('security_logs').insertOne(logEntry).catch(console.error);
+      mongoose.connection.db.collection('security_logs').insertOne(logEntry).catch(err => 
+        logger.error('Failed to insert security log:', { error: err.message })
+      );
     }
 
-    // Log to console for development
-    if (process.env.NODE_ENV === 'development') {
-      console.log(`🚨 Security Event: ${eventType}`, logEntry);
-    }
+    // Log security events
+    logger.warn(`🚨 Security Event: ${eventType}`, logEntry);
 
     // Alert for critical events
     if (logEntry.severity === 'CRITICAL') {
@@ -582,7 +583,7 @@ class SecurityMiddleware {
    */
   alertCriticalEvent(logEntry) {
     // In production, this would integrate with alerting systems
-    console.error('🚨 CRITICAL SECURITY EVENT:', logEntry);
+    logger.error('🚨 CRITICAL SECURITY EVENT:', logEntry);
     
     // TODO: Integrate with:
     // - Slack/Teams notifications
@@ -624,7 +625,7 @@ class SecurityMiddleware {
    */
   setAuditLogger(auditLogger) {
     this.auditLogger = auditLogger;
-    console.log('✅ Security middleware connected to audit logger');
+    logger.info('✅ Security middleware connected to audit logger');
   }
 }
 
