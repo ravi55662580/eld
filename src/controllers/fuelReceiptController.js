@@ -4,6 +4,7 @@ const Asset = require('../models/Asset');
 const { asyncHandler } = require('../middleware/errorHandler');
 const { validationResult } = require('express-validator');
 const mongoose = require('mongoose');
+const logger = require('../utils/logger');
 
 /**
  * Get all fuel receipts for a carrier
@@ -531,10 +532,14 @@ const uploadReceiptImage = asyncHandler(async (req, res) => {
     });
   }
   
-  // TODO: Implement file upload logic
-  // This would typically use multer middleware and cloud storage
-  
-  const { filename, fileSize, uploadPath } = req.body;
+  if (!req.file) {
+    return res.status(400).json({
+      success: false,
+      message: 'No file uploaded'
+    });
+  }
+
+  const { originalname: filename, size: fileSize, path: uploadPath } = req.file;
   
   fuelReceipt.attachments.push({
     type: 'IMAGE',
@@ -624,9 +629,13 @@ const exportFuelReceipts = asyncHandler(async (req, res) => {
   };
   
   if (format === 'csv') {
-    // TODO: Implement CSV export
+    const { convertToCSV, formatFuelReceiptsForCSV } = require('../utils/csvExporter');
+    const csvData = formatFuelReceiptsForCSV(receipts);
+    const csvContent = convertToCSV(csvData);
+    
     res.setHeader('Content-Type', 'text/csv');
     res.setHeader('Content-Disposition', 'attachment; filename=fuel-receipts.csv');
+    return res.send(csvContent);
   } else {
     res.setHeader('Content-Type', 'application/json');
     res.setHeader('Content-Disposition', 'attachment; filename=fuel-receipts.json');

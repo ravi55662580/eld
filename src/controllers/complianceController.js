@@ -604,9 +604,13 @@ const exportComplianceRecords = asyncHandler(async (req, res) => {
   };
   
   if (format === 'csv') {
-    // TODO: Implement CSV export
+    const { convertToCSV, formatComplianceForCSV } = require('../utils/csvExporter');
+    const csvData = formatComplianceForCSV(complianceRecords);
+    const csvContent = convertToCSV(csvData);
+    
     res.setHeader('Content-Type', 'text/csv');
     res.setHeader('Content-Disposition', 'attachment; filename=compliance-records.csv');
+    return res.send(csvContent);
   } else {
     res.setHeader('Content-Type', 'application/json');
     res.setHeader('Content-Disposition', 'attachment; filename=compliance-records.json');

@@ -3,6 +3,9 @@ const Driver = require('../models/Driver');
 const Asset = require('../models/Asset');
 const { asyncHandler } = require('../middleware/errorHandler');
 const { validationResult } = require('express-validator');
+const { applyRoleFiltering } = require('../utils/roleFiltering');
+const { successResponse, errorResponse } = require('../utils/responseHelpers');
+const logger = require('../utils/logger');
 const mongoose = require('mongoose');
 
 /**
@@ -500,9 +503,13 @@ const exportViolations = asyncHandler(async (req, res) => {
   };
   
   if (format === 'csv') {
-    // TODO: Implement CSV export
+    const { convertToCSV, formatViolationsForCSV } = require('../utils/csvExporter');
+    const csvData = formatViolationsForCSV(violations);
+    const csvContent = convertToCSV(csvData);
+    
     res.setHeader('Content-Type', 'text/csv');
     res.setHeader('Content-Disposition', 'attachment; filename=violations.csv');
+    return res.send(csvContent);
   } else {
     res.setHeader('Content-Type', 'application/json');
     res.setHeader('Content-Disposition', 'attachment; filename=violations.json');
