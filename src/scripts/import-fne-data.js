@@ -6,6 +6,7 @@ const { encryptionService } = require('../services/encryptionService');
 const { complianceService } = require('../services/complianceService');
 const { monitoringService } = require('../services/monitoringService');
 const { connectDB } = require('../config/database-enhanced');
+const logger = require('../utils/logger');
 
 /**
  * Secure FNE Transport LLC Data Import Script
@@ -46,7 +47,7 @@ class FNEDataImporter {
    * Main import function
    */
   async importData() {
-    console.log('🚀 Starting secure FNE Transport LLC data import...');
+    logger.info('🚀 Starting secure FNE Transport LLC data import...');
     
     try {
       // Connect to database
@@ -70,11 +71,11 @@ class FNEDataImporter {
       // Log import completion
       await this.logImportCompletion();
       
-      console.log('✅ FNE Transport LLC data import completed successfully!');
-      console.log(`📊 Import Summary:`, this.importStats);
+      logger.info('✅ FNE Transport LLC data import completed successfully!');
+      logger.info(`📊 Import Summary:`, this.importStats);
       
     } catch (error) {
-      console.error('❌ Import failed:', error);
+      logger.error('❌ Import failed:', { error: error.message, stack: error.stack });
       await this.handleImportError(error);
       throw error;
     }
@@ -84,16 +85,16 @@ class FNEDataImporter {
    * Connect to database with enhanced configuration
    */
   async connectToDatabase() {
-    console.log('🔌 Connecting to secure database...');
+    logger.info('🔌 Connecting to secure database...');
     await connectDB();
-    console.log('✅ Database connection established');
+    logger.info('✅ Database connection established');
   }
 
   /**
    * Create or update carrier information
    */
   async createCarrier() {
-    console.log('🏢 Creating/updating carrier information...');
+    logger.info('🏢 Creating/updating carrier information...');
     
     const carrierData = {
       name: this.carrierInfo.name,
@@ -145,7 +146,7 @@ class FNEDataImporter {
       { carrierId: carrier._id, dotNumber: this.carrierInfo.dotNumber }
     );
 
-    console.log('✅ Carrier created/updated:', carrier._id);
+    logger.info('✅ Carrier created/updated:', { carrierId: carrier._id });
     return carrier;
   }
 
@@ -153,7 +154,7 @@ class FNEDataImporter {
    * Create driver profile
    */
   async createDriver(carrierId) {
-    console.log('👤 Creating driver profile...');
+    logger.info('👤 Creating driver profile...');
     
     const driverData = {
       carrierId: carrierId,
@@ -226,7 +227,7 @@ class FNEDataImporter {
       { importSource: this.carrierInfo.dataSource }
     );
 
-    console.log('✅ Driver profile created:', driver.insertedId);
+    logger.info('✅ Driver profile created:', { driverId: driver.insertedId });
     return { _id: driver.insertedId, ...encryptedDriverData };
   }
 

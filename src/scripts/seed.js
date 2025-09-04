@@ -6,13 +6,14 @@ const Carrier = require('../models/Carrier');
 const Driver = require('../models/Driver');
 const Asset = require('../models/Asset');
 const Notification = require('../models/Notification');
+const logger = require('../utils/logger');
 
 const seedData = async () => {
   try {
     await connectDB();
     
     // Clear existing data
-    console.log('🗑️  Clearing existing data...');
+    logger.info('🗑️  Clearing existing data...');
     await User.deleteMany({});
     await Carrier.deleteMany({});
     await Driver.deleteMany({});
@@ -20,7 +21,7 @@ const seedData = async () => {
     await Notification.deleteMany({});
 
     // Create Carrier
-    console.log('🏢 Creating carrier...');
+    logger.info('🏢 Creating carrier...');
     const carrier = await Carrier.create({
       name: 'limitlessworld.demo',
       dotNumber: '7894567',
@@ -45,7 +46,7 @@ const seedData = async () => {
     });
 
     // Create Admin User
-    console.log('👨‍💼 Creating admin user...');
+    logger.info('👨‍💼 Creating admin user...');
     const adminUser = await User.create({
       username: 'admin',
       email: 'admin@limitlessworld.com',
@@ -56,7 +57,7 @@ const seedData = async () => {
     });
 
     // Create Manager User
-    console.log('👩‍💼 Creating manager user...');
+    logger.info('👩‍💼 Creating manager user...');
     const managerUser = await User.create({
       username: 'manager',
       email: 'manager@limitlessworld.com',
@@ -68,7 +69,7 @@ const seedData = async () => {
     });
 
     // Create Demo Account User
-    console.log('👤 Creating demo account...');
+    logger.info('👤 Creating demo account...');
     const demoUser = await User.create({
       username: 'demoaccount',
       email: 'demo@limitlessworld.com',
@@ -80,7 +81,7 @@ const seedData = async () => {
     });
 
     // Create Drivers
-    console.log('🚛 Creating drivers...');
+    logger.info('🚛 Creating drivers...');
     const drivers = await Driver.create([
       {
         carrierId: carrier._id,
@@ -121,7 +122,7 @@ const seedData = async () => {
     ]);
 
     // Create Assets
-    console.log('🚚 Creating assets...');
+    logger.info('🚚 Creating assets...');
     const assets = await Asset.create([
       {
         carrierId: carrier._id,
@@ -160,7 +161,7 @@ const seedData = async () => {
     ]);
 
     // Create Sample Notification
-    console.log('📧 Creating sample notification...');
+    logger.info('📧 Creating sample notification...');
     const notification = await Notification.create({
       carrierId: carrier._id,
       name: 'HOS Violation Alert',
@@ -179,8 +180,8 @@ const seedData = async () => {
       createdBy: adminUser._id
     });
 
-    console.log('✅ Seed data created successfully!');
-    console.log(`
+    logger.info('✅ Seed data created successfully!');
+    logger.info(`
 📊 CREATED DATA SUMMARY:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 

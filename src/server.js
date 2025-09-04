@@ -6,6 +6,7 @@ const morgan = require('morgan');
 const compression = require('compression');
 const connectDB = require('./config/database');
 const { errorHandler, notFound } = require('./middleware/errorHandler');
+const logger = require('./utils/logger');
 
 // Connect to database
 connectDB();
@@ -45,33 +46,32 @@ app.use(`${apiPrefix}/notifications`, require('./routes/notificationRoutes'));
 
 // ELD core routes with error handling
 try {
-  console.log('Loading logbooks routes...');
+  logger.debug('Loading logbooks routes...');
   const logBookRoutes = require('./routes/logBookRoutes');
-  console.log('Logbook routes object:', typeof logBookRoutes, Object.keys(logBookRoutes));
-  console.log('Registering logbooks routes at:', `${apiPrefix}/logbooks`);
+  logger.debug('Logbook routes object:', { type: typeof logBookRoutes, keys: Object.keys(logBookRoutes) });
+  logger.debug('Registering logbooks routes at:', `${apiPrefix}/logbooks`);
   app.use(`${apiPrefix}/logbooks`, logBookRoutes);
-  console.log('✅ Logbooks routes loaded successfully');
+  logger.info('✅ Logbooks routes loaded successfully');
 } catch (error) {
-  console.error('❌ Failed to load logbooks routes:', error.message);
-  console.error('Full error:', error);
+  logger.error('❌ Failed to load logbooks routes:', { error: error.message, stack: error.stack });
 }
 
 try {
   app.use(`${apiPrefix}/dvirs`, require('./routes/dvirRoutes'));
 } catch (error) {
-  console.error('❌ Failed to load DVIR routes:', error.message);
+  logger.error('❌ Failed to load DVIR routes:', { error: error.message });
 }
 
 try {
   app.use(`${apiPrefix}/fuel-receipts`, require('./routes/fuelReceiptRoutes'));
 } catch (error) {
-  console.error('❌ Failed to load fuel receipts routes:', error.message);
+  logger.error('❌ Failed to load fuel receipts routes:', { error: error.message });
 }
 
 try {
   app.use(`${apiPrefix}/violations`, require('./routes/violationRoutes'));
 } catch (error) {
-  console.error('❌ Failed to load violations routes:', error.message);
+  logger.error('❌ Failed to load violations routes:', { error: error.message });
 }
 
 // IFTA and compliance routes
@@ -138,18 +138,16 @@ app.use(errorHandler);
 const PORT = process.env.PORT || 5000;
 
 const server = app.listen(PORT, () => {
-  console.log(`
-🚛 ELD Software API Server
-📡 Running in ${process.env.NODE_ENV} mode
-🌐 Server: http://localhost:${PORT}
-📚 API: http://localhost:${PORT}${apiPrefix}
-❤️  Health: http://localhost:${PORT}/health
-  `);
+  logger.info(`🚛 ELD Software API Server`);
+  logger.info(`📡 Running in ${process.env.NODE_ENV} mode`);
+  logger.info(`🌐 Server: http://localhost:${PORT}`);
+  logger.info(`📚 API: http://localhost:${PORT}${apiPrefix}`);
+  logger.info(`❤️  Health: http://localhost:${PORT}/health`);
 });
 
 // Handle unhandled promise rejections
 process.on('unhandledRejection', (err, promise) => {
-  console.error('Unhandled Promise Rejection:', err.message);
+  logger.error('Unhandled Promise Rejection:', { error: err.message, stack: err.stack });
   server.close(() => {
     process.exit(1);
   });
@@ -157,7 +155,7 @@ process.on('unhandledRejection', (err, promise) => {
 
 // Handle uncaught exceptions
 process.on('uncaughtException', (err) => {
-  console.error('Uncaught Exception:', err.message);
+  logger.error('Uncaught Exception:', { error: err.message, stack: err.stack });
   process.exit(1);
 });
 
